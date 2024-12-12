@@ -1,9 +1,62 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ModalNuevoCliente from './components/ModalNuevoCliente'
+import axios from 'axios';
+import ModalActualizarCliente from './components/ModalActualizarCliente';
 
 const App = () => {
 
+  const [clientes, setClientes] = useState([]);
   const [modalNuevo, setModalNuevo] = useState(false);
+  const [modalActualizar, setModalActualizar] = useState(false);
+  const [cambioCliente, setcambioCliente] = useState(false);
+  const [clienteActualizar, setClienteActualizar] = useState({});
+
+  useEffect(() => {
+
+    const obtenerClientes = async () => {
+      const url = 'http://localhost:8080/clientes';
+
+      try {
+
+        const { data } = await axios(url);
+
+        setClientes(data);
+
+      } catch (error) {
+        setClientes([]);
+      }
+    }
+
+    obtenerClientes();
+
+  }, [cambioCliente]);
+
+  const eliminarCliente = async id => {
+    try {
+
+      const url = `http://localhost:8080/clientes/${id}`;
+
+      const { data } = await axios.delete(url);
+
+      setcambioCliente(!cambioCliente);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const actualizarCliente = async id => {
+    try {
+      const url = `http://localhost:8080/clientes/${id}`;
+      const { data } = await axios(url);
+      setClienteActualizar(data);
+    } catch (error) {
+      console.log(error);
+
+    }
+    setModalActualizar(true);
+
+  }
 
   return (
     <div>
@@ -38,24 +91,41 @@ const App = () => {
         </thead>
 
         <tbody>
-          <tr>
-            <td className='text-center border'>1</td>
-            <td className='text-center border'>asd</td>
-            <td className='text-center border'>asdasd</td>
-            <td className='text-center border'>1212</td>
-            <td className='text-center border'>1212</td>
-            <td className='text-center border'>
-              <div className='flex gap-2 justify-center'>
-                <button className='px-2 rounded-md bg-yellow-500'>Editar</button>
-                <button className='px-2 rounded-md bg-red-500'>Eliminar</button>
-              </div>
-            </td>
-          </tr>
+          {
+            clientes.map(cliente => (
+              <tr key={cliente.id}>
+                <td className='text-center border p-3'>{cliente.id}</td>
+                <td className='text-center border p-3'>{cliente.nombre}</td>
+                <td className='text-center border p-3'>{cliente.apellido_paterno}</td>
+                <td className='text-center border p-3'>{cliente.apellido_materno}</td>
+                <td className='text-center border p-3'>{cliente.dni}</td>
+                <td className='text-center border p-3'>
+                  <div className='flex gap-2 justify-center'>
+                    <button onClick={() => actualizarCliente(cliente.id)} className='px-2 rounded-md bg-yellow-500'>Editar</button>
+                    <button onClick={() => eliminarCliente(cliente.id)} className='px-2 rounded-md bg-red-500'>Eliminar</button>
+                  </div>
+                </td>
+              </tr>
+            ))
+          }
         </tbody>
       </table>
 
       {
-        modalNuevo && <ModalNuevoCliente setModalNuevo={setModalNuevo} />
+        modalActualizar && <ModalActualizarCliente
+          modalActualizar={modalActualizar}
+          setModalActualizar={setModalActualizar}
+          clienteActualizar={clienteActualizar}
+          cambioCliente={cambioCliente}
+        setcambioCliente = { setcambioCliente }
+        />
+      }
+
+      {
+        modalNuevo && <ModalNuevoCliente
+          setModalNuevo={setModalNuevo}
+          cambioCliente={cambioCliente}
+          setcambioCliente={setcambioCliente} />
       }
 
     </div>

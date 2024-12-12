@@ -1,13 +1,13 @@
-import axios from 'axios';
-import React, { useState } from 'react'
-import Alerta from './Alerta';
+import { useState } from "react";
+import Alerta from "./Alerta";
+import axios from "axios";
 
-const ModalNuevoCliente = ({ setModalNuevo, cambioCliente, setcambioCliente }) => {
+const ModalActualizarCliente = ({ setModalActualizar, clienteActualizar, cambioCliente, setcambioCliente }) => {
 
-    const [nombre, setNombre] = useState('');
-    const [apellidoPaterno, setapellidoPaterno] = useState('');
-    const [apellidoMaterno, setapellidoMaterno] = useState('');
-    const [dni, setdni] = useState('');
+    const [nombre, setNombre] = useState(clienteActualizar.nombre);
+    const [apellidoPaterno, setapellidoPaterno] = useState(clienteActualizar.apellido_paterno);
+    const [apellidoMaterno, setapellidoMaterno] = useState(clienteActualizar.apellido_materno);
+    const [dni, setdni] = useState(clienteActualizar.dni);
     const [alerta, setAlerta] = useState({});
 
     const handleSubmit = async e => {
@@ -23,32 +23,26 @@ const ModalNuevoCliente = ({ setModalNuevo, cambioCliente, setcambioCliente }) =
 
         try {
 
-            const url = 'http://localhost:8080/clientes';
-            const { data } = await axios.post(url, { nombre, apellido_materno: apellidoMaterno, apellido_paterno: apellidoPaterno, dni });
-            setcambioCliente(!cambioCliente);
+            const url = `http://localhost:8080/clientes/${clienteActualizar.id}`;
+            const { data } = await axios.put(url, { nombre, apellido_materno: apellidoMaterno, apellido_paterno: apellidoPaterno, dni });
             setAlerta({ mensaje: data, error: false });
-            setNombre('');
-            setapellidoMaterno('');
-            setapellidoPaterno('');
-            setdni('');
+            setcambioCliente(!cambioCliente);
             setTimeout(() => {
-                setAlerta({});
-                setModalNuevo(false);
+                setModalActualizar(false);
             }, 1500);
-
         } catch (error) {
             console.log(error);
-            setAlerta({ mensaje: error.data, error: true })
         }
+
     }
 
     return (
         <div className='bg-gray-500 h-screen text-center flex items-center fixed top-0 right-0 left-0 bg-opacity-70'>
             <div className='bg-gray-200 h-3/4 w-2/4 mx-auto rounded-lg relative'>
-                <div onClick={() => setModalNuevo(false)} className='cursor-pointer bg-gray-200 h-12 w-12 flex items-center justify-center rounded-full absolute -right-4 -top-5'>
+                <div onClick={() => setModalActualizar(false)} className='cursor-pointer bg-gray-200 h-12 w-12 flex items-center justify-center rounded-full absolute -right-4 -top-5'>
                     <svg xmlns="http://www.w3.org/2000/svg" width={40} height={40} viewBox="0 0 24 24" style={{ fill: 'rgba(255, 0, 0, 0.5)', transform: '', msfilter: '' }}><path d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z" /></svg>
                 </div>
-                <h2 className='mt-5 text-2xl font-semibold'>Nuevo Cliente</h2>
+                <h2 className='mt-5 text-2xl font-semibold'>Actualizar Cliente</h2>
 
                 <div className="mt-2">
 
@@ -94,4 +88,4 @@ const ModalNuevoCliente = ({ setModalNuevo, cambioCliente, setcambioCliente }) =
     )
 }
 
-export default ModalNuevoCliente
+export default ModalActualizarCliente
