@@ -11,6 +11,7 @@ const App = () => {
   const [cambioCliente, setcambioCliente] = useState(false);
   const [clienteActualizar, setClienteActualizar] = useState({});
 
+
   useEffect(() => {
 
     const obtenerClientes = async () => {
@@ -30,6 +31,7 @@ const App = () => {
     obtenerClientes();
 
   }, [cambioCliente]);
+
 
   const eliminarCliente = async id => {
     try {
@@ -63,17 +65,6 @@ const App = () => {
       <h1 className='text-3xl font-semibold text-center mt-5'>Gestion Clientes</h1>
 
       <div className='mt-5 w-4/5 flex mx-auto'>
-        <form className='w-3/4 flex justify-around'>
-          <div className='flex gap-2 items-center'>
-            <label htmlFor="">Nro. DNI:</label>
-            <input type="text" className='rounded-md p-2' />
-          </div>
-          <div className='flex gap-2 items-center'>
-            <label htmlFor="">Apellido Paterno:</label>
-            <input type="text" className='rounded-md p-2' />
-          </div>
-          <button className='py-2 px-4 bg-blue-600 text-white rounded-md'>Buscar</button>
-        </form>
 
         <button onClick={() => setModalNuevo(true)} className='py-2 px-4 bg-blue-600 text-white rounded-md'>Nuevo</button>
       </div>
@@ -117,7 +108,7 @@ const App = () => {
           setModalActualizar={setModalActualizar}
           clienteActualizar={clienteActualizar}
           cambioCliente={cambioCliente}
-        setcambioCliente = { setcambioCliente }
+          setcambioCliente={setcambioCliente}
         />
       }
 
